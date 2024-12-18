@@ -37,8 +37,17 @@ public class Serie {
     private String sinopse;
 
     //Essa anotação indica que esse atributo não será persistido no banco por enquanto
-    @Transient
+    //@Transient
+    //Anotation que indica o a cardinalidade do relacionamento,
+    //O atributo mappedBy indica por qual atributo na outra classe mapeada será feito o mapeamento
+    //O cascade significa que os "episodios" serão salvos a partir da classe serie, por isso é operação em cascata
+    //o "all" significa que tudo que acontecer com a classe Serie salva acontece com a classe episodio
+    //O atributo "fecth" indica como as entidades relacionadas são carregadas do banco,
+    //No caso especifico o "EAGER" indica ansioso, traz as entidades mesmo sem pedir
+    //Traz de uma forma implicita
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Episodio> episodios = new ArrayList<>();
+
 
     //Construtor padrao exigido pela JPA
     public Serie(){}
@@ -59,6 +68,15 @@ public class Serie {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Episodio> getEpisodios() {
+        return episodios;
+    }
+
+    public void setEpisodios(List<Episodio> episodios) {
+        episodios.forEach(e -> e.setSerie(this));
+        this.episodios = episodios;
     }
 
     public String getTitulo() {
@@ -125,6 +143,7 @@ public class Serie {
                 ", avaliacao=" + avaliacao +
                 ", atores='" + atores + '\'' +
                 ", poster='" + poster + '\'' +
-                ", sinopse='" + sinopse + '\'';
+                ", sinopse='" + sinopse + '\'' +
+                ", episodios='" + episodios + '\'';
     }
 }
