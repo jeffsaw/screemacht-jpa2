@@ -15,6 +15,8 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
 
     Optional<Serie> findByTituloContainingIgnoreCase(String nomeSerie);
 
+    Optional<Serie> findById(Long id);
+
     List<Serie> findByAtoresContainingIgnoreCase(String nomeAtor);
 
     List<Serie> findTop5ByOrderByAvaliacaoDesc();
@@ -36,4 +38,13 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
 
     @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s = :serie AND YEAR(e.dataLancamento) >= :ano")
     List<Episodio> buscarEpisodioAposAno(Serie serie, int ano);
+
+    @Query("SELECT s FROM Serie s " +
+            "JOIN s.episodios e " +
+            "GROUP BY s " +
+            "ORDER BY MAX(e.dataLancamento) DESC LIMIT 5")
+    List<Serie> encontrarEpisodiosMaisRecentes();;
+
+    @Query("SELECT e FROM Serie s JOIN s.episodios e WHERE s.id = :id AND e.temporada = :numero")
+    List<Episodio> obterEpisodiosPorTemporada(Long id, Long numero);
 }
